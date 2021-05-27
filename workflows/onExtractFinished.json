@@ -1,0 +1,96 @@
+{
+  "name": "onExtractFinished",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{$node[\"listen extract\"].json[\"content\"]}}",
+              "value2": "finished"
+            }
+          ]
+        }
+      },
+      "name": "IF3",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "general_queue",
+        "sendInputData": false,
+        "message": "FINISHED",
+        "options": {}
+      },
+      "name": "send finished",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1,
+      "position": [
+        950,
+        280
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    },
+    {
+      "parameters": {
+        "queue": "extract_queue",
+        "options": {}
+      },
+      "name": "listen extract",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    }
+  ],
+  "connections": {
+    "IF3": {
+      "main": [
+        [
+          {
+            "node": "send finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "listen extract": {
+      "main": [
+        [
+          {
+            "node": "IF3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "id": "5"
+}
