@@ -1,0 +1,87 @@
+{
+  "name": "result listener",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "results",
+        "options": {}
+      },
+      "name": "result listener",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        520,
+        320
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n  console.log(\"task\", task);\n  if (task && task.nextJob && task.nextJob.job) {\n    console.log(\"cool\");\n    task.job[task.nextJob.idx].status = task.nextJob.job.status;\n    delete task.nextJob\n  }\n} catch (e) {\n  console.log(\"exception: \", e, items[0]);\n}\nitems[0].json.content = task;\nreturn items;\n"
+      },
+      "name": "handle response and modify job json",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        800,
+        330
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "job_queue",
+        "sendInputData": "={{$node[\"handle response and modify job json\"].json[\"content\"]}}",
+        "options": {}
+      },
+      "name": "send back to job queue to run next step in job",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1,
+      "position": [
+        1130,
+        320
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    }
+  ],
+  "connections": {
+    "result listener": {
+      "main": [
+        [
+          {
+            "node": "handle response and modify job json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "handle response and modify job json": {
+      "main": [
+        [
+          {
+            "node": "send back to job queue to run next step in job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "id": "9"
+}

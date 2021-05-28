@@ -1,0 +1,169 @@
+{
+  "name": "Job listener",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "job_queue",
+        "options": {}
+      },
+      "name": "job listener1",
+      "type": "n8n-nodes-base.rabbitmqTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        310
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n  // validate\n  if (!task || !task.job || task.job.length < 1 || !task.emailAddress) {\n    throw 'Invalid arguments given';\n  }\n  // create unique ID if necessary (on first run)\n  if (!task.id) {\n    task.id = parseInt(new Date() * Math.random(), 10);\n  }\n  //find next job entry that has not run yet (no status)\n  var nextJobIdx = -1;\n  var nextJobEntry;\n  task.job.every((job, idx) => {\n    console.log(\"job\", job, \"idx: \", idx)\n    if (!job.status) {\n      nextJobEntry = job;\n      nextJobIdx = idx;\n      return false;\n    }\n  });\n  console.log(\"next job: \" + nextJobEntry.type ? nextJobEntry.type : 'none');\n} catch (e) {\n  return [{\"json\": {\"error\": e.toString()}}];\n}\ntask.nextJob = {\n  \"job\": nextJobEntry,\n  \"idx\": nextJobIdx\n};\nitems[0].json.content = task;\nreturn items;"
+      },
+      "name": "Function returns next job name1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        730,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "queue": "={{$node[\"IF there is a next job1\"].json.content[\"nextJob\"][\"job\"][\"type\"]}}",
+        "options": {}
+      },
+      "name": "send message to next queue1",
+      "type": "n8n-nodes-base.rabbitmq",
+      "typeVersion": 1,
+      "position": [
+        1510,
+        250
+      ],
+      "credentials": {
+        "rabbitmq": "rabbitcredentials"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [],
+          "boolean": [
+            {
+              "value1": "={{$node[\"Function returns next job name1\"].items[0].json.content.error",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "IF invalid job json1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        920,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Send Email1",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        1090,
+        190
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{$node[\"Function returns next job name1\"].json.content[\"nextJob\"][\"job\"][\"type\"]}}",
+              "operation": "notEqual",
+              "value2": "'none'"
+            }
+          ]
+        }
+      },
+      "name": "IF there is a next job1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        340
+      ]
+    }
+  ],
+  "connections": {
+    "job listener1": {
+      "main": [
+        [
+          {
+            "node": "Function returns next job name1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function returns next job name1": {
+      "main": [
+        [
+          {
+            "node": "IF invalid job json1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF invalid job json1": {
+      "main": [
+        [
+          {
+            "node": "Send Email1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF there is a next job1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF there is a next job1": {
+      "main": [
+        [
+          {
+            "node": "send message to next queue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "id": "6"
+}
