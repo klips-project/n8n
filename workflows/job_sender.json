@@ -1,5 +1,5 @@
 {
-  "name": "Job sender",
+  "name": "job_sender",
   "nodes": [
     {
       "parameters": {},
@@ -15,7 +15,7 @@
       "parameters": {
         "queue": "job_queue",
         "sendInputData": false,
-        "message": "={\n\t\"job\": [{\n\t\t\t\"type\": \"download\",\n\t\t\t\"datasetURI\": \"http://somethin\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"extract\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"publishWMS\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"publishWFS\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"publishInPostgres\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"cleanup\"\n\t\t},\n\t\t{\n\t\t\t\"type\": \"sendEmail\"\n\t\t}\n\t],\n\t\"emailAddress\": \"peter@tosh.com\"\n}",
+        "message": "={\n    \"job\": [\n        {\n            \"type\": \"download\",\n            \"datasetURI\": \"https://somethin\"\n        },\n        {\n            \"type\": \"extract\"\n        }\n    ],\n    \"emailAddress\": \"peter@tosh.com\"\n}",
         "options": {
           "durable": true
         }
