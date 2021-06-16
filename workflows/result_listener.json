@@ -20,8 +20,8 @@
       "type": "n8n-nodes-base.rabbitmqTrigger",
       "typeVersion": 1,
       "position": [
-        520,
-        320
+        130,
+        670
       ],
       "credentials": {
         "rabbitmq": "rabbitcredentials"
@@ -35,8 +35,8 @@
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        800,
-        330
+        410,
+        680
       ]
     },
     {
@@ -48,8 +48,8 @@
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1,
       "position": [
-        1130,
-        320
+        740,
+        670
       ],
       "credentials": {
         "rabbitmq": "rabbitcredentials"
@@ -70,8 +70,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        770,
-        380
+        590,
+        560
       ]
     },
     {
@@ -82,8 +82,8 @@
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        1040,
-        250
+        850,
+        470
       ]
     }
   ],
