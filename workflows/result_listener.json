@@ -29,7 +29,7 @@
     },
     {
       "parameters": {
-        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n  if (task && task.nextJob && task.nextJob.job) {\n    task.job[task.nextJob.idx] = task.nextJob.job;\n    delete task.nextJob;\n  }\n} catch (e) {\n  console.log('exception: ', e, items[0]);\n}\nconsole.log(task);\nitems[0].json.content = task;\nreturn items;\n\n"
+        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n  console.log('task', JSON.stringify(task));\n  if (task && task.nextJob && task.nextJob.job) {\n    task.job[task.nextJob.idx] = task.nextJob.job;\n    delete task.nextJob;\n  }\n} catch (e) {\n  console.log('exception: ', e, items[0]);\n}\nconsole.log(JSON.stringify(task));\nitems[0].json.content = task;\nreturn items;\n\n"
       },
       "name": "handle response and modify job json",
       "type": "n8n-nodes-base.function",
@@ -54,6 +54,37 @@
       "credentials": {
         "rabbitmq": "rabbitcredentials"
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node[\"handle response and modify job json\"].json.content[\"status\"]}}",
+              "value2": "success"
+            }
+          ]
+        }
+      },
+      "name": "overall job success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        770,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "console.log('Job done!');\n\nreturn items;"
+      },
+      "name": "return overall success",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        250
+      ]
     }
   ],
   "connections": {
@@ -70,6 +101,24 @@
     },
     "handle response and modify job json": {
       "main": [
+        [
+          {
+            "node": "overall job success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "overall job success": {
+      "main": [
+        [
+          {
+            "node": "return overall success",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "send back to job queue to run next step in job",
