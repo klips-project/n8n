@@ -1,16 +1,13 @@
 # n8n
 
-This repository holds docker and n8n (https://github.com/n8n-io/n8n) configuration files in order to model and handle project specific workflows.
+This repository holds docker and n8n [n8n-io/n8n](https://github.com/n8n-io/n8n) configuration files in order to model and handle project specific workflows.
 
-You will need to create a `.env` file in this folder with the following content:
+You will need to create a `.env` file in the `docker` folder with the following content:
 
+```text
+POSTGRES_PASSWORD=🔑
 ```
-POSTGRES_PASSWORD=SECRET
-```
 
-The password needs to be changed of course
+The password needs to be changed of course.
 
-
-After starting up, open the UI on localhost:5678 and create a new set of credentials for rabbit-mq.
-
-Finally, import the workflows from the `workflows` folder.
+After starting up the `docker-compose.yml` file in `./docker` via `docker-compose up --build`, open the UI on [localhost:5678](http://localhost:5678/). The basic workflows and rabbit-mq credentials are imported on the first startup.
