@@ -4,19 +4,28 @@ services:
     image: postgres:11
     hostname: n8n-postgres
     ports:
-      - 127.0.0.1:5432:5432
+      - 5432:5432
     environment:
       - POSTGRES_USER=n8n
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DBNAME=n8n
     volumes:
-      - ./postgresql_init_data:/docker-entrypoint-initdb.d
-      - ./postgresql_data:/var/lib/postgresql/data:Z
+      - ./n8n-postgres/postgresql_init_data:/docker-entrypoint-initdb.d
+      - ./n8n-postgres/postgresql_data:/var/lib/postgresql/data:Z
+  rabbitmq:
+    image: nexus.terrestris.de/terrestris/mqm/rabbit-mq
+    build:
+      context: rabbitMQ/
+    ports:
+      - 5672:5672
+      - 15672:15672
   n8n:
-    image: n8nio/n8n
+    image: nexus.terrestris.de/terrestris/mqm/n8n
+    build:
+      context: n8n/
     hostname: n8n
     ports:
-        - 127.0.0.1:5678:5678
+        - 5678:5678
     environment:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=n8n-postgres
@@ -29,3 +38,6 @@ services:
       - ~/.n8n:/home/node/.n8n
     depends_on:
       - n8n-postgres
+    # Wait 5 seconds to start n8n to make sure that PostgreSQL is ready
+    # when n8n tries to connect to it
+    command: /bin/sh -c "sleep 5; n8n start"
