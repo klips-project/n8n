@@ -13,16 +13,13 @@ services:
       - ./n8n-postgres/postgresql_init_data:/docker-entrypoint-initdb.d
       - ./n8n-postgres/postgresql_data:/var/lib/postgresql/data:Z
   rabbitmq:
-    image: nexus.terrestris.de/terrestris/mqm/rabbit-mq
-    build:
-      context: rabbitMQ/
+    image: rabbitmq:3.8-management
+    hostname: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
   n8n:
-    image: nexus.terrestris.de/terrestris/mqm/n8n
-    build:
-      context: n8n/
+    image: n8nio/n8n
     hostname: n8n
     ports:
         - 5678:5678
