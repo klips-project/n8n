@@ -10,4 +10,4 @@ POSTGRES_PASSWORD=🔑
 
 The password needs to be changed of course.
 
-After starting up the `docker-compose.yml` file in `./docker` via `docker-compose up`, open the UI on [localhost:5678](http://localhost:5678/). The basic workflows and rabbit-mq credentials are imported on the first startup.
+After starting up the `docker-compose.yml` file in `./docker` via `docker-compose up`, open the UI on [localhost:5678](http://localhost:5678/). Create the RabbitMQ credentials and import the workflows from the workflows folder.
