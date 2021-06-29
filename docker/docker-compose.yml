@@ -4,7 +4,7 @@ services:
     image: postgres:11
     hostname: n8n-postgres
     ports:
-      - 5432:5432
+      - 127.0.0.1:5432:5432
     environment:
       - POSTGRES_USER=n8n
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -16,13 +16,13 @@ services:
     image: rabbitmq:3.8-management
     hostname: rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 127.0.0.1:5672:5672
+      - 127.0.0.1:15672:15672
   n8n:
     image: n8nio/n8n
     hostname: n8n
     ports:
-        - 5678:5678
+        - 127.0.0.1:5678:5678
     environment:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=n8n-postgres
