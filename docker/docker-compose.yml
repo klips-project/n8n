@@ -35,6 +35,17 @@ services:
       - ~/.n8n:/home/node/.n8n
     depends_on:
       - n8n-postgres
-    # Wait 5 seconds to start n8n to make sure that PostgreSQL is ready
-    # when n8n tries to connect to it
-    command: /bin/sh -c "sleep 5; n8n start"
+  download-new-data-from-url:
+    image: ghcr.io/klips-project/mqm-worker/download-new-data-from-url:latest
+    volumes:
+      - ../data:/home/data:Z
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+  gunzip-file:
+    image: ghcr.io/klips-project/mqm-worker/gunzip-file:latest
+    volumes:
+      - ../data:/home/data:Z
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
