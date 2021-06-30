@@ -1,5 +1,5 @@
 {
-  "name": "job_sender",
+  "name": "job sender",
   "nodes": [
     {
       "parameters": {},
@@ -15,7 +15,7 @@
       "parameters": {
         "queue": "job_queue",
         "sendInputData": false,
-        "message": "={\n    \"job\": [\n        {\n            \"type\": \"download\",\n            \"datasetURI\": \"https://somethin\"\n        },\n        {\n            \"type\": \"extract\"\n        }\n    ],\n    \"emailAddress\": \"peter@tosh.com\"\n}",
+        "message": "={\n    \"job\": [\n        {\n            \"id\": 123,\n            \"type\": \"download\",\n            \"inputs\": [\n              \"https://opendata.dwd.de/climate_environment/CDC/derived_germany/soil/daily/historical/derived_germany_soil_daily_historical_1001.txt.gz\"\n            ]\n        },\n        {\n            \"id\": 456,\n            \"type\": \"extract\",\n            \"inputs\": [\n                {\n                    \"outputOfId\": 123,\n                    \"outputIndex\": 0\n                }\n            ]\n        }\n    ],\n    \"emailAddress\": \"peter@tosh.com\"\n}",
         "options": {
           "durable": true
         }
@@ -24,8 +24,8 @@
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1,
       "position": [
-        550,
-        300
+        750,
+        450
       ],
       "credentials": {
         "rabbitmq": "rabbitcredentials"
@@ -47,5 +47,5 @@
   },
   "active": false,
   "settings": {},
-  "id": "7"
+  "id": "10"
 }
