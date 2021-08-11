@@ -20,8 +20,8 @@
       "type": "n8n-nodes-base.rabbitmqTrigger",
       "typeVersion": 1,
       "position": [
-        460,
-        310
+        -180,
+        570
       ],
       "credentials": {
         "rabbitmq": "rabbitcredentials"
@@ -29,14 +29,14 @@
     },
     {
       "parameters": {
-        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n\n  // WORKAROUND for reading JSON content as next job\n  if (task.fields) {\n    task = task.content;\n  }\n\n  // validate\n  if (!task || !task.job || task.job.length < 1) {\n    throw 'Invalid arguments given';\n  }\n  // create unique ID if necessary (on first run)\n  if (!task.id) {\n    task.id = parseInt(new Date() * Math.random(), 10);\n  }\n  //find next job entry that has not run yet (no status)\n  var nextJobIdx = -1;\n  var nextJobEntry;\n  task.job.some(function (job, idx) {\n    if (!job.status) {\n      nextJobEntry = job;\n      nextJobIdx = idx;\n      return true;\n    } else {\n      task.status = 'success';\n    }\n  });\n  console.log('next job: ' + nextJobEntry.type ? nextJobEntry.type : 'none');\n} catch (e) {\n  return [{ json: { error: e.toString() } }];\n}\ntask.nextJob = {\n  job: nextJobEntry,\n  idx: nextJobIdx\n};\nitems[0].json.content = task;\nreturn items;\n\n"
+        "functionCode": "try {\n  var task = JSON.parse(items[0].json.content);\n\n  // WORKAROUND for reading JSON content as next job\n  if (task.fields) {\n    task = task.content;\n  }\n\n  // validate\n  if (!task || !task.job || task.job.length < 1) {\n    throw 'Invalid arguments given';\n  }\n  // create unique ID if necessary (on first run)\n  if (!task.id) {\n    task.id = parseInt(new Date() * Math.random(), 10);\n  }\n  //find next job entry that has not run yet (no status)\n  var nextJobIdx = -1;\n  var nextJobEntry;\n  task.job.some(function (job, idx) {\n    if (!job.status) {\n      nextJobEntry = job;\n      nextJobIdx = idx;\n      return true;\n    } else {\n      return false;\n    }\n  });\n  console.log('next job: ' + nextJobEntry.type ? nextJobEntry.type : 'none');\n} catch (e) {\n  return [{ json: { error: e.toString() } }];\n}\nif (nextJobEntry) {\n  task.nextJob = {\n    job: nextJobEntry,\n    idx: nextJobIdx\n  };\n} else {\n  // overall job success\n  task.status = 'success';\n}\n\nitems[0].json.content = task;\nreturn items;\n\n"
       },
       "name": "Function returns next job name1",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
       "position": [
-        730,
-        320
+        90,
+        580
       ]
     },
     {
@@ -48,8 +48,8 @@
       "type": "n8n-nodes-base.rabbitmq",
       "typeVersion": 1,
       "position": [
-        1510,
-        250
+        870,
+        510
       ],
       "credentials": {
         "rabbitmq": "rabbitcredentials"
@@ -71,8 +71,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        920,
-        320
+        280,
+        580
       ]
     },
     {
@@ -83,8 +83,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 1,
       "position": [
-        1090,
-        190
+        450,
+        450
       ],
       "disabled": true
     },
@@ -105,8 +105,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        1250,
-        340
+        610,
+        600
       ]
     }
   ],
@@ -163,7 +163,7 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {},
-  "id": "6"
+  "id": "1"
 }
